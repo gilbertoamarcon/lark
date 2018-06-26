@@ -1,0 +1,93 @@
+goal:
+  functions:
+    PosVictim:
+    - arguments: [v0]
+      value: l0
+    - arguments: [v1]
+      value: l0
+    - arguments: [v2]
+      value: l0
+  numerics: {}
+  predicates: {}
+initialstate:
+  functions:
+    PosRobot:
+    - arguments: [r0]
+      value: l0
+    - arguments: [r1]
+      value: l0
+    - arguments: [a]
+      value: l0
+    - arguments: [b]
+      value: l0
+    PosVictim:
+    - arguments: [v0]
+      value: l2
+    - arguments: [v1]
+      value: l1
+    - arguments: [v2]
+      value: l3
+  numerics: {}
+  predicates:
+    Blocked:
+    - [l2]
+objects: {a: Robot, b: Robot, l0: Location, l1: Location, l2: Location, l3: Location,
+  r0: Robot, r1: Robot, v0: Victim, v1: Victim, v2: Victim}
+worldstate:
+  functions: {}
+  numerics:
+    Distance:
+    - arguments: [l0, l1]
+      value: 50.0
+    - arguments: [l1, l0]
+      value: 50.0
+    - arguments: [l0, l2]
+      value: 10.0
+    - arguments: [l2, l0]
+      value: 10.0
+    - arguments: [l2, l3]
+      value: 10.0
+    - arguments: [l3, l2]
+      value: 10.0
+    DriveStd:
+    - arguments: []
+      value: 0.2
+    NominalCost:
+    - arguments: []
+      value: 0.1
+    NominalTimeMean:
+    - arguments: []
+      value: 0.1
+    NominalTimeStd:
+    - arguments: []
+      value: 0.1
+    RobotVelocity:
+    - arguments: [r0]
+      value: 5.0
+    - arguments: [r1]
+      value: 5.0
+    - arguments: [a]
+      value: 30.0
+    - arguments: [b]
+      value: 10.0
+    TriageTimeMean:
+    - arguments: []
+      value: 0.4
+    TriageTimeStd:
+    - arguments: []
+      value: 0.2
+  predicates:
+    Ambulance:
+    - [a]
+    Bulldozer:
+    - [b]
+    Rescuer:
+    - [r0]
+    - [r1]
+    Road:
+    - [l0, l1]
+    - [l1, l0]
+    - [l0, l2]
+    - [l2, l0]
+    - [l2, l3]
+    - [l3, l2]
