@@ -22,6 +22,9 @@ Problem{
 		Road(l0,l1); Road(l1,l0); Distance(l0,l1) = 50.0; Distance(l1,l0) = 50.0;
 		Road(l0,l2); Road(l2,l0); Distance(l0,l2) = 10.0; Distance(l2,l0) = 10.0;
 		Road(l2,l3); Road(l3,l2); Distance(l2,l3) = 10.0; Distance(l3,l2) = 10.0;
+		Road(l0,l1); Road(l1,l0);
+		Road(l0,l2); Road(l2,l0);
+		Road(l2,l3); Road(l3,l2);
 
 		// Velocities
 		RobotVelocity(r0) = 5.0;

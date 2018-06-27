@@ -1,5 +1,7 @@
 goal:
   functions:
+    Inside: []
+    PosRobot: []
     PosVictim:
     - arguments: [v0]
       value: l0
@@ -7,10 +9,14 @@ goal:
       value: l0
     - arguments: [v2]
       value: l0
-  numerics: {}
-  predicates: {}
+    RobotLoad: []
+  predicates:
+    Blocked: []
+    Busy: []
+    Triaged: []
 initialstate:
   functions:
+    Inside: []
     PosRobot:
     - arguments: [r0]
       value: l0
@@ -27,14 +33,15 @@ initialstate:
       value: l1
     - arguments: [v2]
       value: l3
-  numerics: {}
+    RobotLoad: []
   predicates:
     Blocked:
-    - [l2]
+    - arguments: [l2]
+    Busy: []
+    Triaged: []
 objects: {a: Robot, b: Robot, l0: Location, l1: Location, l2: Location, l3: Location,
   r0: Robot, r1: Robot, v0: Victim, v1: Victim, v2: Victim}
 worldstate:
-  functions: {}
   numerics:
     Distance:
     - arguments: [l0, l1]
@@ -78,16 +85,23 @@ worldstate:
       value: 0.2
   predicates:
     Ambulance:
-    - [a]
+    - arguments: [a]
     Bulldozer:
-    - [b]
+    - arguments: [b]
     Rescuer:
-    - [r0]
-    - [r1]
+    - arguments: [r0]
+    - arguments: [r1]
     Road:
-    - [l0, l1]
-    - [l1, l0]
-    - [l0, l2]
-    - [l2, l0]
-    - [l2, l3]
-    - [l3, l2]
+    - arguments: [l0, l1]
+    - arguments: [l1, l0]
+    - arguments: [l0, l2]
+    - arguments: [l2, l0]
+    - arguments: [l2, l3]
+    - arguments: [l3, l2]
+    - arguments: [l0, l1]
+    - arguments: [l1, l0]
+    - arguments: [l0, l2]
+    - arguments: [l2, l0]
+    - arguments: [l2, l3]
+    - arguments: [l3, l2]
+    Transport: []

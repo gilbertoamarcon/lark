@@ -14,6 +14,11 @@ sudo pip install lark-parser
 ## Usage
 
 ```
-python src/main.py -g grammar/problem.g -i data/subset.apl -o data/subset.yaml
+python src/domain.py -g grammar/domain.g -i data/dom.apl -o data/domain.yaml
+```
+
+
+```
+python src/problem.py -g grammar/problem.g -y data/domain.yaml -i data/prob.apl -o data/problem.yaml
 ```
 
