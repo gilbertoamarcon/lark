@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+from collections import OrderedDict
 from lark import Lark
 from lark import Transformer
 import argparse
-import yaml
+import oyaml as yaml
 
 def main(transformer):
 
@@ -73,22 +74,22 @@ class transformer(Transformer):
 	type_list		= list
 
 	def domain(self, domain):
-		self.domain_dict = {
-			'types':		domain[0],
-			'worlddef':		domain[1],
-			'statedef':		domain[2],
-			# 'actiondef':	domain[3],
-		}
+		self.domain_dict = OrderedDict([
+			('types',			domain[0]),
+			('worlddef',		domain[1]),
+			('statedef',		domain[2]),
+			# ('actiondef',		domain[3]),
+		])
 		return self.domain_dict
 
 	def types(self, (items,)):
 		return items
 
 	def relation_bundle(self, items):
-		ret_val = {}
+		ret_val = OrderedDict()
 		for i in items:
 			if i['type'] not in ret_val:
-				ret_val[i['type']] = {}
+				ret_val[i['type']] = OrderedDict()
 			ret_val[i['type']][i['name']] = i['entry']
 		return ret_val
 

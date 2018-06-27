@@ -1,35 +1,35 @@
-statedef:
-  functions:
-    Inside:
-      arguments: [Robot]
-      return: Robot
-    PosRobot:
-      arguments: [Robot]
-      return: Location
-    PosVictim:
-      arguments: [Victim]
-      return: Location
-    RobotLoad:
-      arguments: [Robot]
-      return: Victim
-  predicates:
-    Blocked: [Location]
-    Busy: [Robot]
-    Triaged: [Victim]
 types: [Location, Victim, Robot]
 worlddef:
   numerics:
-    Distance: [Location, Location]
     DriveStd: []
     NominalCost: []
     NominalTimeMean: []
     NominalTimeStd: []
-    RobotVelocity: [Robot]
     TriageTimeMean: []
     TriageTimeStd: []
+    Distance: [Location, Location]
+    RobotVelocity: [Robot]
   predicates:
+    Rescuer: [Robot]
     Ambulance: [Robot]
     Bulldozer: [Robot]
-    Rescuer: [Robot]
-    Road: [Location, Location]
     Transport: [Robot]
+    Road: [Location, Location]
+statedef:
+  functions:
+    PosVictim:
+      return: Location
+      arguments: [Victim]
+    PosRobot:
+      return: Location
+      arguments: [Robot]
+    RobotLoad:
+      return: Victim
+      arguments: [Robot]
+    Inside:
+      return: Robot
+      arguments: [Robot]
+  predicates:
+    Busy: [Robot]
+    Triaged: [Victim]
+    Blocked: [Location]
