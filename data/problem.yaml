@@ -1,7 +1,7 @@
 objects: {a: Robot, b: Robot, r0: Robot, r1: Robot, v0: Victim, v1: Victim, v2: Victim,
   l2: Location, l3: Location, l0: Location, l1: Location}
 worldstate:
-  numerics:
+  numeric:
     DriveStd:
     - arguments: []
       value: 0.2
@@ -42,7 +42,7 @@ worldstate:
       value: 30.0
     - arguments: [b]
       value: 10.0
-  predicates:
+  predicate:
     Rescuer:
     - [r0]
     - [r1]
@@ -59,7 +59,7 @@ worldstate:
     - [l2, l3]
     - [l3, l2]
 initialstate:
-  functions:
+  function:
     PosVictim:
     - arguments: [v0]
       value: l2
@@ -78,13 +78,13 @@ initialstate:
       value: l0
     RobotLoad: []
     Inside: []
-  predicates:
+  predicate:
     Busy: []
     Triaged: []
     Blocked:
     - [l2]
 goal:
-  functions:
+  function:
     PosVictim:
     - arguments: [v0]
       value: l0
@@ -95,7 +95,7 @@ goal:
     PosRobot: []
     RobotLoad: []
     Inside: []
-  predicates:
+  predicate:
     Busy: []
     Triaged: []
     Blocked: []

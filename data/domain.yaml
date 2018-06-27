@@ -1,6 +1,6 @@
 types: [Location, Victim, Robot]
 worlddef:
-  numerics:
+  numeric:
     DriveStd: []
     NominalCost: []
     NominalTimeMean: []
@@ -9,14 +9,14 @@ worlddef:
     TriageTimeStd: []
     Distance: [Location, Location]
     RobotVelocity: [Robot]
-  predicates:
+  predicate:
     Rescuer: [Robot]
     Ambulance: [Robot]
     Bulldozer: [Robot]
     Transport: [Robot]
     Road: [Location, Location]
 statedef:
-  functions:
+  function:
     PosVictim:
       return: Location
       arguments: [Victim]
@@ -29,7 +29,514 @@ statedef:
     Inside:
       return: Robot
       arguments: [Robot]
-  predicates:
+  predicate:
     Busy: [Robot]
     Triaged: [Victim]
     Blocked: [Location]
+actiondef:
+- name: DriveFast
+  conditionsdef:
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: orig
+    when: '@start'
+  - entry:
+      entry: [orig, dest]
+      type: predicate
+      name: Road
+    when: '@start'
+  - entry:
+      entry: [orig]
+      type: predicate
+      name: Blocked
+    when: '@overall'
+  - entry:
+      entry: [dest]
+      type: predicate
+      name: Blocked
+    when: '@overall'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@end'
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: dest
+    when: '@end'
+  actiondur:
+    mu:
+      operator: /
+      operands:
+      - vars: [orig, dest]
+        numeric: Distance
+      - vars: [r]
+        numeric: RobotVelocity
+    sigma:
+      operator: /
+      operands:
+      - operator: '*'
+        operands:
+        - vars: []
+          numeric: DriveStd
+        - vars: [orig, dest]
+          numeric: Distance
+      - vars: [r]
+        numeric: RobotVelocity
+    type: normal
+  entry: {r: Robot, orig: Location, dest: Location}
+- name: DriveSlow
+  conditionsdef:
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: orig
+    when: '@start'
+  - entry:
+      entry: [orig, dest]
+      type: predicate
+      name: Road
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@end'
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: dest
+    when: '@end'
+  actiondur:
+    mu:
+      operator: /
+      operands:
+      - operator: '*'
+        operands:
+        - [5.0]
+        - vars: [orig, dest]
+          numeric: Distance
+      - vars: [r]
+        numeric: RobotVelocity
+    sigma:
+      operator: /
+      operands:
+      - operator: '*'
+        operands:
+        - vars: []
+          numeric: DriveStd
+        - vars: [orig, dest]
+          numeric: Distance
+      - vars: [r]
+        numeric: RobotVelocity
+    type: normal
+  entry: {r: Robot, orig: Location, dest: Location}
+- name: Clear
+  conditionsdef:
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Bulldozer
+    when: '@start'
+  - entry:
+      entry: [l]
+      type: predicate
+      name: Blocked
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [l]
+      type: predicate
+      name: Blocked
+    when: '@end'
+  actiondur:
+    mu:
+      vars: []
+      numeric: NominalTimeMean
+    sigma:
+      vars: []
+      numeric: NominalTimeStd
+    type: normal
+  entry: {r: Robot, l: Location}
+- name: Triage
+  conditionsdef:
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [v]
+      type: function
+      name: PosVictim
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Rescuer
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@end'
+  - entry:
+      entry: [v]
+      type: predicate
+      name: Triaged
+    when: '@end'
+  actiondur:
+    mu:
+      vars: []
+      numeric: TriageTimeMean
+    sigma:
+      vars: []
+      numeric: TriageTimeStd
+    type: normal
+  entry: {r: Robot, v: Victim, l: Location}
+- name: Load
+  conditionsdef:
+  - entry:
+      entry: [a]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [v]
+      type: function
+      name: PosVictim
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [a]
+      type: function
+      name: RobotLoad
+      value: null
+    when: '@start'
+  - entry:
+      entry: [v]
+      type: predicate
+      name: Triaged
+    when: '@start'
+  - entry:
+      entry: [a]
+      type: predicate
+      name: Ambulance
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Rescuer
+    when: '@start'
+  - entry: [r, a]
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Busy
+    when: '@end'
+  - entry:
+      entry: [v]
+      type: function
+      name: PosVictim
+      value: null
+    when: '@end'
+  - entry:
+      entry: [a]
+      type: function
+      name: RobotLoad
+      value: v
+    when: '@end'
+  actiondur:
+    mu:
+      vars: []
+      numeric: NominalTimeMean
+    sigma:
+      vars: []
+      numeric: NominalTimeStd
+    type: normal
+  entry: {a: Robot, r: Robot, v: Victim, l: Location}
+- name: Unload
+  conditionsdef:
+  - entry:
+      entry: [a]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [a]
+      type: function
+      name: RobotLoad
+      value: v
+    when: '@start'
+  - entry:
+      entry: [v]
+      type: function
+      name: PosVictim
+      value: null
+    when: '@start'
+  - entry:
+      entry: [a]
+      type: predicate
+      name: Ambulance
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [v]
+      type: function
+      name: PosVictim
+      value: l
+    when: '@end'
+  - entry:
+      entry: [a]
+      type: function
+      name: RobotLoad
+      value: null
+    when: '@end'
+  actiondur:
+    mu:
+      vars: []
+      numeric: NominalTimeMean
+    sigma:
+      vars: []
+      numeric: NominalTimeStd
+    type: normal
+  entry: {a: Robot, v: Victim, l: Location}
+- name: EnterTransport
+  conditionsdef:
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: function
+      name: Inside
+      value: null
+    when: '@overall'
+  - entry:
+      entry: [t]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Transport
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Rescuer
+    when: '@start'
+  - entry: [t, r]
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Busy
+    when: '@end'
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: null
+    when: '@end'
+  - entry:
+      entry: [r]
+      type: function
+      name: Inside
+      value: t
+    when: '@end'
+  actiondur:
+    mu:
+      vars: []
+      numeric: NominalTimeMean
+    sigma:
+      vars: []
+      numeric: NominalTimeStd
+    type: normal
+  entry: {r: Robot, t: Robot, l: Location}
+- name: ExitTransport
+  conditionsdef:
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [t]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@overall'
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Transport
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: predicate
+      name: Rescuer
+    when: '@start'
+  - entry: [t, r]
+    when: '@start'
+  - entry:
+      entry: [r]
+      type: function
+      name: Inside
+      value: t
+    when: '@start'
+  cost:
+    type: constant
+    value:
+      vars: []
+      numeric: NominalCost
+  effectsdef:
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Busy
+    when: '@start'
+  - entry:
+      entry: [t]
+      type: predicate
+      name: Busy
+    when: '@end'
+  - entry:
+      entry: [r]
+      type: function
+      name: PosRobot
+      value: l
+    when: '@end'
+  - entry:
+      entry: [r]
+      type: function
+      name: Inside
+      value: null
+    when: '@end'
+  actiondur:
+    mu:
+      vars: []
+      numeric: NominalTimeMean
+    sigma:
+      vars: []
+      numeric: NominalTimeStd
+    type: normal
+  entry: {r: Robot, t: Robot, l: Location}

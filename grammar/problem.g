@@ -1,3 +1,20 @@
+%import common.WS
+%ignore WS
+%ignore COMMENT 
+
+number				: /[0-9]+(.[0-9]+)?/
+id					: /[a-zA-Z][a-zA-Z0-9_]*/
+COMMENT				: "//" /(.)+\n/
+
+deadline			: number
+type				: id
+object				: id
+predicate			: id
+numeric				: id
+function			: id
+action				: id
+var					: id
+
 ?start				: problem
 
 problem				: "Problem" "{" objects worldstate initialstate goalstate "}"
@@ -15,21 +32,4 @@ functions 			: function		"("  object ("," object)* ")" "=" ("undefined" | object
 
 func_subgoal		: function		"("  object ("," object)* ")" "==" ("undefined" | object) ";"
 
-
-type				: id
-object				: id
-predicate			: id
-numeric				: id
-function			: id
-deadline			: number
-
-
-id					: /[a-zA-Z][a-zA-Z0-9_]*/
-number				: /[0-9]+(.[0-9]+)?/
-COMMENT				: "//" /(.)+\n/
-
-
-%import common.WS
-%ignore WS
-%ignore COMMENT 
 

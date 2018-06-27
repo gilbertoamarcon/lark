@@ -77,9 +77,8 @@ class transformer(Transformer):
 
 	type		= id
 	object		= id
-	predicate	= id
-	numeric		= id
-	function	= id
+	action		= id
+	var			= id
 	deadline	= number
 
 	def problem(self, problem):
@@ -119,31 +118,27 @@ class transformer(Transformer):
 		return self.group(items, 'statedef')
 
 
-	def predicates(self, items):
+	def declare(self, items):
 		return {
-			'type':				'predicates',
-			'name':				items[0],
+			'type':				items[0].data.encode('ascii','ignore'),
+			'name':				items[0].children[0],
 			'entry':			items[1:],
 		}
 
-	def assign(self, items, kword):
+	def assign(self, items):
 		return {
-			'type':				kword,
-			'name':				items[0],
+			'type':				items[0].data.encode('ascii','ignore'),
+			'name':				items[0].children[0],
 			'entry':{
 				'arguments':	items[1:-1],
 				'value':		items[-1],
 			},
 		}
 
-	def numerics(self, items):
-		return self.assign(items, 'numerics')
-
-	def functions(self, items):
-		return self.assign(items, 'functions')
-
-	def func_subgoal(self, items):
-		return self.assign(items, 'functions')
+	predicates		= declare
+	numerics		= assign
+	functions		= assign
+	func_subgoal	= assign
 
 
 
