@@ -126,9 +126,9 @@ class transformer(Transformer):
 			'entry':			items[1:],
 		}
 
-	def numerics(self, items):
+	def assign(self, items, kword):
 		return {
-			'type':				'numerics',
+			'type':				kword,
 			'name':				items[0],
 			'entry':{
 				'arguments':	items[1:-1],
@@ -136,15 +136,14 @@ class transformer(Transformer):
 			},
 		}
 
+	def numerics(self, items):
+		return self.assign(items, 'numerics')
+
 	def functions(self, items):
-		return {
-			'type':				'functions',
-			'name':				items[0],
-			'entry':{
-				'arguments':	items[1:-1],
-				'value':		items[-1],
-			},
-		}
+		return self.assign(items, 'functions')
+
+	def func_subgoal(self, items):
+		return self.assign(items, 'functions')
 
 
 

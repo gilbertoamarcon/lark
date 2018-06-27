@@ -7,11 +7,13 @@ object_type			: type object ("," object)* ";"
 
 worldstate			: "WorldState"		"{" (predicates | numerics | functions)* "}"
 initialstate		: "InitialState"	"{" (predicates | numerics | functions)* "}"
-goalstate			: "Goal"			"{" (predicates | numerics | functions)* "}"
+goalstate			: "Goal"			"{" (predicates | numerics | func_subgoal)* "}"
 
 predicates			: predicate		"("  object ("," object)* ")" ";"
 numerics			: numeric		"(" (object ("," object)*)* ")" "=" number ";"
 functions 			: function		"("  object ("," object)* ")" "=" ("undefined" | object) ";"
+
+func_subgoal		: function		"("  object ("," object)* ")" "==" ("undefined" | object) ";"
 
 
 type				: id
