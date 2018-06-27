@@ -31,6 +31,13 @@ def main(transformer):
 			required=True,
 			help='Output file.'
 		)
+
+
+
+
+
+
+
 	args = parser.parse_args()
 
 	# Reading the grammar
@@ -53,10 +60,14 @@ def main(transformer):
 	with open(args.output_filename,'w') as f:
 		f.write(yaml.dump(domain))
 
+
+
+
+
 class transformer(Transformer):
 
 	def __init__(self):
-		self.domain_dict = {}
+		pass
 
 	def number(self, (s,)):
 		return float(s)
@@ -64,23 +75,22 @@ class transformer(Transformer):
 	def id(self, (s,)):
 		return s.encode('ascii','ignore')
 
-	type			= id
-	object			= id
-	predicate		= id
-	numeric			= id
-	function		= id
-	deadline		= number
+	type		= id
+	object		= id
+	predicate	= id
+	numeric		= id
+	function	= id
+	deadline	= number
 
-	type_list		= list
+	type_list	= list
 
 	def domain(self, domain):
-		self.domain_dict = OrderedDict([
+		return OrderedDict([
 			('types',			domain[0]),
 			('worlddef',		domain[1]),
 			('statedef',		domain[2]),
 			# ('actiondef',		domain[3]),
 		])
-		return self.domain_dict
 
 	def types(self, (items,)):
 		return items

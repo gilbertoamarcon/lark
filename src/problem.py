@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+from collections import OrderedDict
 from lark import Lark
 from lark import Transformer
 import argparse
-import yaml
+import oyaml as yaml
 
 def main(transformer):
 
@@ -67,16 +68,6 @@ class transformer(Transformer):
 
 	def __init__(self,domain):
 		self.domain = domain
-		self.problem_dict = {}
-
-	def problem(self, problem):
-		self.problem_dict = {
-			'objects':		problem[0],
-			'worldstate':	problem[1],
-			'initialstate':	problem[2],
-			'goal':			problem[3],
-		}
-		return self.problem_dict
 
 	def number(self, (s,)):
 		return float(s)
@@ -91,20 +82,30 @@ class transformer(Transformer):
 	function	= id
 	deadline	= number
 
+	def problem(self, problem):
+		return OrderedDict([
+			('objects',			problem[0]),
+			('worldstate',		problem[1]),
+			('initialstate',	problem[2]),
+			('goal',			problem[3]),
+		])
+
 	def objects(self, items):
 		return dict([i for l in items for i in l])
 
 	def object_type(self, items):
 		return [(i,items[0]) for i in items[1:]]
 
-
 	def group(self, items, keyword):
-		ret_val = {relat:{} for relat in self.domain[keyword]}
-		for type,relat in self.domain[keyword].items():
-			ret_val[type] = {k:[] for k in relat.keys()}
-		for i in items:
-			ret_val[i['type']][i['name']].append({e:i[e] for e in ['arguments','value'] if e in i})
 
+		# Initializing a dictionary of lists for each relation type
+		ret_val = OrderedDict()
+		for relat_type,relat in self.domain[keyword].items():
+			ret_val[relat_type] = OrderedDict([(k,[]) for k in relat.keys()])
+
+		# Appending entries
+		for i in items:
+			ret_val[i['type']][i['name']].append(i['entry'])
 
 		return ret_val
 
@@ -114,31 +115,35 @@ class transformer(Transformer):
 	def initialstate(self, items):
 		return self.group(items, 'statedef')
 
-	def goal(self, items):
+	def goalstate(self, items):
 		return self.group(items, 'statedef')
 
 
 	def predicates(self, items):
 		return {
-			'type':			'predicates',
-			'name':			items[0],
-			'arguments':	items[1:],
+			'type':				'predicates',
+			'name':				items[0],
+			'entry':			items[1:],
 		}
 
 	def numerics(self, items):
 		return {
-			'type':			'numerics',
-			'name':			items[0],
-			'arguments':	items[1:-1],
-			'value':		items[-1],
+			'type':				'numerics',
+			'name':				items[0],
+			'entry':{
+				'arguments':	items[1:-1],
+				'value':		items[-1],
+			},
 		}
 
 	def functions(self, items):
 		return {
-			'type':			'functions',
-			'name':			items[0],
-			'arguments':	items[1:-1],
-			'value':		items[-1],
+			'type':				'functions',
+			'name':				items[0],
+			'entry':{
+				'arguments':	items[1:-1],
+				'value':		items[-1],
+			},
 		}
 
 

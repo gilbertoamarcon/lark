@@ -11,6 +11,9 @@ functiondef			: "function" type function "(" type_list ")" ";"
 
 type_list			: ( type ( "," type )* )?
 
+
+
+
 type				: id
 object				: id
 predicate			: id
