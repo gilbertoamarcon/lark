@@ -84,33 +84,40 @@ class transformer(Transformer):
 	def types(self, (items,)):
 		return items
 
-	def relation(self, items):
+	def relation_bundle(self, items):
 		ret_val = {}
 		for i in items:
-			type		= i[0]
-			entries		= i[1]
-			if not type in ret_val:
-				ret_val[type] = {}
-			if type == 'predicates' or type == 'numerics':
-				ret_val[type][entries[0]] = entries[1]
-			if type == 'functions':
-				ret_val[type][entries[1]] = {
-					'return': entries[0],
-					'arguments': entries[2],
-				}
+			if i['type'] not in ret_val:
+				ret_val[i['type']] = {}
+			ret_val[i['type']][i['name']] = i['entry']
 		return ret_val
 
-	worlddef = relation
-	statedef = relation
+	worlddef = relation_bundle
+	statedef = relation_bundle
 
 	def predicatedef(self, items):
-		return ('predicates',items)
+		return {
+					'type': 'predicates',
+					'name': items[0],
+					'entry': items[1],
+				}
 
 	def numericdef(self, items):
-		return ('numerics',items)
+		return {
+					'type': 'numerics',
+					'name': items[0],
+					'entry': items[1],
+				}
 
 	def functiondef(self, items):
-		return ('functions',items)
+		return {
+					'type': 'functions',
+					'name': items[1],
+					'entry': {
+						'return': items[0],
+						'arguments': items[2],
+					},
+				}
 
 
 
