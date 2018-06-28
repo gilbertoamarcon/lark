@@ -175,20 +175,41 @@ class transformer(Transformer):
 	# Action Conditions
 	# ========================================================
 
-	def pred_cond(self, items):
+
+	def pred_cond_pos(self, items):
 		return {
 			'type':			items[0].data.encode('ascii','ignore'),
 			'name':			items[0].children[0],
 			'arguments':	items[1],
+			'logic':		True,
 		}
 
-	def func_cond(self, items):
+	def pred_cond_neg(self, items):
+		return {
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'logic':		False,
+		}
+
+	def func_cond_pos(self, items):
 		value = items[2] if (len(items)==3) else None
 		return {
 			'type':			items[0].data.encode('ascii','ignore'),
 			'name':			items[0].children[0],
 			'arguments':	items[1],
 			'value':		value,
+			'logic':		True,
+		}
+
+	def func_cond_neg(self, items):
+		value = items[2] if (len(items)==3) else None
+		return {
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
+			'logic':		False,
 		}
 
 	def num_cond(self, items):
@@ -222,14 +243,23 @@ class transformer(Transformer):
 			'value':		value,
 		}
 
-	def pred_eff(self, items):
+	def pred_eff_pos(self, items):
 		return {
 			'type':			items[0].data.encode('ascii','ignore'),
 			'name':			items[0].children[0],
 			'arguments':	items[1],
+			'logic':		True,
 		}
 
-	def numeric_eff_assign(self, items):
+	def pred_eff_neg(self, items):
+		return {
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'logic':		False,
+		}
+
+	def numeric_eff(self, items):
 		value = items[2] if (len(items)==3) else None
 		return {
 			'effect':		'assign',
@@ -239,7 +269,17 @@ class transformer(Transformer):
 			'value':		value,
 		}
 
-	def numeric_eff_increase(self, items):
+	def numeric_assign(self, items):
+		value = items[2] if (len(items)==3) else None
+		return {
+			'effect':		'assign',
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
+		}
+
+	def increase(self, items):
 		value = items[2] if (len(items)==3) else None
 		return {
 			'effect':		'increase',
@@ -249,7 +289,7 @@ class transformer(Transformer):
 			'value':		value,
 		}
 
-	def numeric_eff_decrease(self, items):
+	def decrease(self, items):
 		value = items[2] if (len(items)==3) else None
 		return {
 			'effect':		'decrease',

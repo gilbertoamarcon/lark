@@ -66,14 +66,19 @@ exp				: numeric var_list			-> exp_numeric
 
 // Temporal conditions
 conditions		: when ":" ( pred_cond | func_cond | num_cond | varsdiff ) ";"
-effect			: when ":" ( func_assign | pred_eff | numeric_eff )";"
+effect			: when ":" ( func_assign | pred_eff | ( numeric_assign | increase | decrease ) )";"
 
 
 // Conditions
 
-pred_cond		: "!"? predicate var_list
+pred_cond		: ( pred_cond_pos | pred_cond_neg )		-> list_strip
+pred_cond_pos	: predicate var_list
+pred_cond_neg	: "!" predicate var_list
 
-func_cond		: "!"? function var_list "=" ( var | "undefined" )
+
+func_cond		: ( func_cond_pos | func_cond_neg )		-> list_strip
+func_cond_pos	: function var_list "=" ( var | "undefined" )
+func_cond_neg	: "!" function var_list "=" ( var | "undefined" )
 
 num_cond		: numeric var_list ( "<=" | ">=" | "==" | "<" | ">" ) number
 
@@ -86,11 +91,13 @@ varsdiff		: var "!=" var
 
 func_assign		: function var_list "=" ( var | "undefined" )
 
-pred_eff		: "!"? predicate var_list
+pred_eff		: ( pred_eff_pos | pred_eff_neg )		-> list_strip
+pred_eff_pos	: predicate var_list
+pred_eff_neg	: "!" predicate var_list
 
-numeric_eff		: numeric var_list "=" exp				-> numeric_eff_assign
-				| ( "increase" ) numeric var_list exp	-> numeric_eff_increase
-				| ( "decrease" ) numeric var_list exp	-> numeric_eff_decrease
+numeric_assign	: numeric var_list "=" exp
+increase		: ( "increase" ) numeric var_list exp
+decrease		: ( "decrease" ) numeric var_list exp
 
 
 
