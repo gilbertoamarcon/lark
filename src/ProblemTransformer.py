@@ -3,68 +3,8 @@
 from collections import OrderedDict
 from lark import Lark
 from lark import Transformer
-import argparse
-import oyaml as yaml
 
-def main(transformer):
-
-	# Parsing user input
-	parser = argparse.ArgumentParser()
-	parser.add_argument(
-			'-g','--grammar_filename',
-			nargs='?',
-			type=str,
-			required=True,
-			help='Grammar specification file.'
-		)
-	parser.add_argument(
-			'-y','--yaml_domain_file',
-			nargs='?',
-			type=str,
-			required=True,
-			help='YAML domain file.'
-		)
-	parser.add_argument(
-			'-i','--input_filename',
-			nargs='?',
-			type=str,
-			required=True,
-			help='Input file to parse.'
-		)
-	parser.add_argument(
-			'-o','--output_filename',
-			nargs='?',
-			type=str,
-			required=True,
-			help='Output file.'
-		)
-	args = parser.parse_args()
-
-	# Reading the grammar
-	with open(args.grammar_filename,'r') as f:
-		grammar = f.read()
-
-	# Setting up the parser
-	parser = Lark(grammar).parse
-
-	# Reading the input file
-	with open(args.input_filename,'rb') as f:
-		inp = f.read()
-
-	# Parsing the input file
-	tree = parser(inp)
-
-	# Domain YAML
-	with open(args.yaml_domain_file,'r') as f:
-		domain = yaml.load(f.read())
-
-	problem = transformer(domain).transform(tree)
-
-	# Storing the result in the output file
-	with open(args.output_filename,'w') as f:
-		f.write(yaml.dump(problem))
-
-class transformer(Transformer):
+class ProblemTransformer(Transformer):
 
 	def __init__(self,domain):
 		self.domain = domain
@@ -141,6 +81,3 @@ class transformer(Transformer):
 	func_subgoal	= assign
 
 
-
-if __name__ == '__main__':
-	main(transformer)
