@@ -54,6 +54,8 @@ domain{
 			@overall: !Blocked(dest);
 			@start: !Busy(r);
 		effects:
+			@start: RobotVelocity(r) = 10.0;
+			@start: increase RobotVelocity(r) 10.0;
 			@start: Busy(r);
 			@end: !Busy(r);
 			@end: PosRobot(r) = dest;

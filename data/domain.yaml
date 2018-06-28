@@ -37,31 +37,36 @@ actiondef:
 - name: DriveFast
   conditionsdef:
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: orig
+      arguments: [r]
     when: '@start'
+    type: function
   - entry:
-      entry: [orig, dest]
       type: predicate
       name: Road
+      arguments: [orig, dest]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [orig]
       type: predicate
       name: Blocked
+      arguments: [orig]
     when: '@overall'
+    type: predicate
   - entry:
-      entry: [dest]
       type: predicate
       name: Blocked
+      arguments: [dest]
     when: '@overall'
+    type: predicate
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
+    type: predicate
   cost:
     type: constant
     value:
@@ -69,38 +74,49 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [r]
-      type: predicate
-      name: Busy
+      arguments: [r]
+      type: numeric
+      effect: assign
+      value: 10.0
+      name: RobotVelocity
     when: '@start'
   - entry:
-      entry: [r]
+      arguments: [r]
+      type: numeric
+      effect: increase
+      value: 10.0
+      name: RobotVelocity
+    when: '@start'
+  - entry:
       type: predicate
       name: Busy
+      arguments: [r]
+    when: '@start'
+  - entry:
+      type: predicate
+      name: Busy
+      arguments: [r]
     when: '@end'
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: dest
+      arguments: [r]
     when: '@end'
   actiondur:
     mu:
-      operator: /
-      operands:
-      - vars: [orig, dest]
+    - /
+    - - vars: [orig, dest]
         numeric: Distance
       - vars: [r]
         numeric: RobotVelocity
     sigma:
-      operator: /
-      operands:
-      - operator: '*'
-        operands:
-        - vars: []
-          numeric: DriveStd
-        - vars: [orig, dest]
-          numeric: Distance
+    - /
+    - - - '*'
+        - - vars: []
+            numeric: DriveStd
+          - vars: [orig, dest]
+            numeric: Distance
       - vars: [r]
         numeric: RobotVelocity
     type: normal
@@ -108,21 +124,24 @@ actiondef:
 - name: DriveSlow
   conditionsdef:
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: orig
+      arguments: [r]
     when: '@start'
+    type: function
   - entry:
-      entry: [orig, dest]
       type: predicate
       name: Road
+      arguments: [orig, dest]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
+    type: predicate
   cost:
     type: constant
     value:
@@ -130,41 +149,37 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@end'
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: dest
+      arguments: [r]
     when: '@end'
   actiondur:
     mu:
-      operator: /
-      operands:
-      - operator: '*'
-        operands:
-        - [5.0]
-        - vars: [orig, dest]
-          numeric: Distance
+    - /
+    - - - '*'
+        - - 5.0
+          - vars: [orig, dest]
+            numeric: Distance
       - vars: [r]
         numeric: RobotVelocity
     sigma:
-      operator: /
-      operands:
-      - operator: '*'
-        operands:
-        - vars: []
-          numeric: DriveStd
-        - vars: [orig, dest]
-          numeric: Distance
+    - /
+    - - - '*'
+        - - vars: []
+            numeric: DriveStd
+          - vars: [orig, dest]
+            numeric: Distance
       - vars: [r]
         numeric: RobotVelocity
     type: normal
@@ -172,21 +187,24 @@ actiondef:
 - name: Clear
   conditionsdef:
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: l
+      arguments: [r]
     when: '@start'
+    type: function
   - entry:
-      entry: [r]
       type: predicate
       name: Bulldozer
+      arguments: [r]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [l]
       type: predicate
       name: Blocked
+      arguments: [l]
     when: '@start'
+    type: predicate
   cost:
     type: constant
     value:
@@ -194,9 +212,9 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [l]
       type: predicate
       name: Blocked
+      arguments: [l]
     when: '@end'
   actiondur:
     mu:
@@ -210,27 +228,31 @@ actiondef:
 - name: Triage
   conditionsdef:
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: l
+      arguments: [r]
     when: '@overall'
+    type: function
   - entry:
-      entry: [v]
       type: function
       name: PosVictim
       value: l
+      arguments: [v]
     when: '@overall'
+    type: function
   - entry:
-      entry: [r]
       type: predicate
       name: Rescuer
+      arguments: [r]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
+    type: predicate
   cost:
     type: constant
     value:
@@ -238,19 +260,19 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@end'
   - entry:
-      entry: [v]
       type: predicate
       name: Triaged
+      arguments: [v]
     when: '@end'
   actiondur:
     mu:
@@ -264,51 +286,62 @@ actiondef:
 - name: Load
   conditionsdef:
   - entry:
-      entry: [a]
       type: function
       name: PosRobot
       value: l
+      arguments: [a]
     when: '@overall'
+    type: function
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: l
+      arguments: [r]
     when: '@overall'
+    type: function
   - entry:
-      entry: [v]
       type: function
       name: PosVictim
       value: l
+      arguments: [v]
     when: '@overall'
+    type: function
   - entry:
-      entry: [a]
       type: function
       name: RobotLoad
       value: null
+      arguments: [a]
     when: '@start'
+    type: function
   - entry:
-      entry: [v]
       type: predicate
       name: Triaged
+      arguments: [v]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [a]
       type: predicate
       name: Ambulance
+      arguments: [a]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
       type: predicate
       name: Rescuer
+      arguments: [r]
     when: '@start'
-  - entry: [r, a]
-    when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
+      type: varsdiff
+      arguments: [r, a]
+    when: '@start'
+    type: varsdiff
+  - entry:
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
+    type: predicate
   cost:
     type: constant
     value:
@@ -316,26 +349,26 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@start'
   - entry:
-      entry: [r]
       type: predicate
       name: Busy
+      arguments: [r]
     when: '@end'
   - entry:
-      entry: [v]
       type: function
       name: PosVictim
       value: null
+      arguments: [v]
     when: '@end'
   - entry:
-      entry: [a]
       type: function
       name: RobotLoad
       value: v
+      arguments: [a]
     when: '@end'
   actiondur:
     mu:
@@ -349,28 +382,32 @@ actiondef:
 - name: Unload
   conditionsdef:
   - entry:
-      entry: [a]
       type: function
       name: PosRobot
       value: l
+      arguments: [a]
     when: '@overall'
+    type: function
   - entry:
-      entry: [a]
       type: function
       name: RobotLoad
       value: v
+      arguments: [a]
     when: '@start'
+    type: function
   - entry:
-      entry: [v]
       type: function
       name: PosVictim
       value: null
+      arguments: [v]
     when: '@start'
+    type: function
   - entry:
-      entry: [a]
       type: predicate
       name: Ambulance
+      arguments: [a]
     when: '@start'
+    type: predicate
   cost:
     type: constant
     value:
@@ -378,16 +415,16 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [v]
       type: function
       name: PosVictim
       value: l
+      arguments: [v]
     when: '@end'
   - entry:
-      entry: [a]
       type: function
       name: RobotLoad
       value: null
+      arguments: [a]
     when: '@end'
   actiondur:
     mu:
@@ -401,40 +438,49 @@ actiondef:
 - name: EnterTransport
   conditionsdef:
   - entry:
-      entry: [t]
       type: predicate
       name: Busy
+      arguments: [t]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
       type: function
       name: Inside
       value: null
+      arguments: [r]
     when: '@overall'
+    type: function
   - entry:
-      entry: [t]
       type: function
       name: PosRobot
       value: l
+      arguments: [t]
     when: '@overall'
+    type: function
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: l
+      arguments: [r]
     when: '@overall'
+    type: function
   - entry:
-      entry: [t]
       type: predicate
       name: Transport
+      arguments: [t]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
       type: predicate
       name: Rescuer
+      arguments: [r]
     when: '@start'
-  - entry: [t, r]
+    type: predicate
+  - entry:
+      type: varsdiff
+      arguments: [t, r]
     when: '@start'
+    type: varsdiff
   cost:
     type: constant
     value:
@@ -442,26 +488,26 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [t]
       type: predicate
       name: Busy
+      arguments: [t]
     when: '@start'
   - entry:
-      entry: [t]
       type: predicate
       name: Busy
+      arguments: [t]
     when: '@end'
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: null
+      arguments: [r]
     when: '@end'
   - entry:
-      entry: [r]
       type: function
       name: Inside
       value: t
+      arguments: [r]
     when: '@end'
   actiondur:
     mu:
@@ -475,34 +521,42 @@ actiondef:
 - name: ExitTransport
   conditionsdef:
   - entry:
-      entry: [t]
       type: predicate
       name: Busy
+      arguments: [t]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [t]
       type: function
       name: PosRobot
       value: l
+      arguments: [t]
     when: '@overall'
+    type: function
   - entry:
-      entry: [t]
       type: predicate
       name: Transport
+      arguments: [t]
     when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
       type: predicate
       name: Rescuer
+      arguments: [r]
     when: '@start'
-  - entry: [t, r]
-    when: '@start'
+    type: predicate
   - entry:
-      entry: [r]
+      type: varsdiff
+      arguments: [t, r]
+    when: '@start'
+    type: varsdiff
+  - entry:
       type: function
       name: Inside
       value: t
+      arguments: [r]
     when: '@start'
+    type: function
   cost:
     type: constant
     value:
@@ -510,26 +564,26 @@ actiondef:
       numeric: NominalCost
   effectsdef:
   - entry:
-      entry: [t]
       type: predicate
       name: Busy
+      arguments: [t]
     when: '@start'
   - entry:
-      entry: [t]
       type: predicate
       name: Busy
+      arguments: [t]
     when: '@end'
   - entry:
-      entry: [r]
       type: function
       name: PosRobot
       value: l
+      arguments: [r]
     when: '@end'
   - entry:
-      entry: [r]
       type: function
       name: Inside
       value: null
+      arguments: [r]
     when: '@end'
   actiondur:
     mu:

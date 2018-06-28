@@ -75,6 +75,7 @@ class transformer(Transformer):
 	def id(self, (s,)):
 		return s.encode('ascii','ignore')
 
+	# Token ids and numbers
 	type			= id
 	object			= id
 	action			= id
@@ -82,13 +83,26 @@ class transformer(Transformer):
 	when			= id
 	deadline		= number
 
-	type_list		= list
+	# Lists
+	type_list_curl	= list
+	type_list_squa	= list
 	var_list		= list
 	type_var_list	= list
-	conditionsdef	= list
-	effectsdef		= list
+
 	actiondefs		= list
-	varsdiff		= list
+	effectsdef		= list
+	conditionsdef	= list
+
+	# Get first and only list element
+	def list_strip(self, (items,)):
+		return items
+	types			= list_strip
+	actiondur		= list_strip
+	cost			= list_strip
+
+	# Type and variable name for each entry
+	def type_var_list(self, items):
+		return OrderedDict([(name,type) for name,type in zip(items[1::2],items[0::2])])
 
 	def domain(self, domain):
 		return OrderedDict([
@@ -98,9 +112,6 @@ class transformer(Transformer):
 			('actiondef',		domain[3]),
 		])
 
-	def types(self, (items,)):
-		return items
-
 	def relation_bundle(self, items):
 		ret_val = OrderedDict()
 		for i in items:
@@ -109,8 +120,8 @@ class transformer(Transformer):
 			ret_val[i['type']][i['name']] = i['entry']
 		return ret_val
 
-	def type_var_list(self, items):
-		return OrderedDict([(name,type) for name,type in zip(items[1::2],items[0::2])])
+	worlddef = relation_bundle
+	statedef = relation_bundle
 
 	def actiondef(self, items):
 		return {
@@ -122,39 +133,34 @@ class transformer(Transformer):
 					'effectsdef':		items[5],
 				}
 
-	def actiondur(self, (items,)):
-		return items
+	def declare(self, items):
+		return {
+			'type':				items[0].data.encode('ascii','ignore'),
+			'name':				items[0].children[0],
+			'entry':			items[1],
+		}
 
+	def assign(self, items):
+		return {
+			'type':				items[1].data.encode('ascii','ignore'),
+			'name':				items[1].children[0],
+			'entry':{
+				'arguments':	items[2:][0],
+				'return':		items[0],
+			},
+		}
+
+	predicatedef	= declare
+	numericdef		= declare
+	functiondef		= assign
+
+	# Temporal conditions
 	def conditions(self, items):
 		return {
 			'when':		items[0],
 			'entry':	items[1],
+			'type':		items[1]['type'],
 		}
-
-	def pred_cond(self, items):
-		return {
-			'type':		items[0].data.encode('ascii','ignore'),
-			'name':		items[0].children[0],
-			'entry':	items[1],
-		}
-
-	def func_cond(self, items):
-		value = items[2] if (len(items)==3) else None
-		return {
-			'type':		items[0].data.encode('ascii','ignore'),
-			'name':		items[0].children[0],
-			'entry':	items[1],
-			'value':	value,
-		}
-
-	def num_cond(self, items):
-		return {
-			'type':		items[0].data.encode('ascii','ignore'),
-			'name':		items[0].children[0],
-			'entry':	items[1],
-			'value':	items[2],
-		}
-
 
 	def effect(self, items):
 		return {
@@ -162,29 +168,107 @@ class transformer(Transformer):
 			'entry':	items[1],
 		}
 
+
+
+
+	# ========================================================
+	# Action Conditions
+	# ========================================================
+
+	def pred_cond(self, items):
+		return {
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+		}
+
+	def func_cond(self, items):
+		value = items[2] if (len(items)==3) else None
+		return {
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
+		}
+
+	def num_cond(self, items):
+		return {
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		items[2],
+		}
+
+	def varsdiff(self, items):
+		return {
+			'type':			'varsdiff',
+			'arguments':	items,
+		}
+
+
+
+
+
+	# ========================================================
+	# Action Effects
+	# ========================================================
+
 	def func_assign(self, items):
 		value = items[2] if (len(items)==3) else None
 		return {
-			'type':		items[0].data.encode('ascii','ignore'),
-			'name':		items[0].children[0],
-			'entry':	items[1],
-			'value':	value,
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
 		}
 
 	def pred_eff(self, items):
 		return {
-			'type':		items[0].data.encode('ascii','ignore'),
-			'name':		items[0].children[0],
-			'entry':	items[1],
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
 		}
 
-	def numeric_eff(self, items):
-		print items
-		return items
+	def numeric_eff_assign(self, items):
+		value = items[2] if (len(items)==3) else None
+		return {
+			'effect':		'assign',
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
+		}
 
-	def cost(self, (items,)):
-		return items
+	def numeric_eff_increase(self, items):
+		value = items[2] if (len(items)==3) else None
+		return {
+			'effect':		'increase',
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
+		}
 
+	def numeric_eff_decrease(self, items):
+		value = items[2] if (len(items)==3) else None
+		return {
+			'effect':		'decrease',
+			'type':			items[0].data.encode('ascii','ignore'),
+			'name':			items[0].children[0],
+			'arguments':	items[1],
+			'value':		value,
+		}
+
+
+
+
+
+
+
+
+	# ========================================================
+	# Probability Distributions
+	# ========================================================
 
 	def distribution_constant(self, (items,)):
 		return {
@@ -212,62 +296,33 @@ class transformer(Transformer):
 			'value':	items,
 		}
 
-	def exp(self, items):
-		return items
+
+
+
+	# ========================================================
+	# Math
+	# ========================================================
 
 	def exp_numeric(self, items):
 		return {
-			'numeric':		items[0].children[0],
-			'vars':			items[1:][0],
+			'numeric':	items[0].children[0],
+			'vars':		items[1:][0],
 		}
 
 	def mul(self, items):
-		return {
-			'operands':		items,
-			'operator':		'*',
-		}
+		return ['*',items]
 
 	def div(self, items):
-		return {
-			'operands':		items,
-			'operator':		'/',
-		}
+		return ['/',items]
 
 	def add(self, items):
-		return {
-			'operands':		items,
-			'operator':		'+',
-		}
+		return ['+',items]
 
 	def sub(self, items):
-		return {
-			'operands':		items,
-			'operator':		'-',
-		}
+		return ['-',items]
 
-	worlddef = relation_bundle
-	statedef = relation_bundle
 
-	def declare(self, items):
-		return {
-			'type':				items[0].data.encode('ascii','ignore'),
-			'name':				items[0].children[0],
-			'entry':			items[1],
-		}
 
-	def assign(self, items):
-		return {
-			'type':				items[1].data.encode('ascii','ignore'),
-			'name':				items[1].children[0],
-			'entry':{
-				'arguments':	items[2:][0],
-				'return':		items[0],
-			},
-		}
-
-	predicatedef	= declare
-	numericdef		= declare
-	functiondef		= assign
 
 
 
