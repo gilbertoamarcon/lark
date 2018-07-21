@@ -3,8 +3,8 @@
 from collections import OrderedDict
 from lark import Lark
 from lark import Transformer
-from DomainTransformer import DomainTransformer
-from ProblemTransformer import ProblemTransformer
+from AplDomainTransformer import AplDomainTransformer
+from AplProblemTransformer import AplProblemTransformer
 import argparse
 import oyaml as yaml
 
@@ -60,7 +60,7 @@ def main():
 	if args.yaml_domain_file is None:
 
 		# Parsing domain
-		database = DomainTransformer().transform(tree)
+		database = AplDomainTransformer().transform(tree)
 
 	else:
 
@@ -69,7 +69,7 @@ def main():
 			domain = yaml.load(f.read())
 
 		# Parsing problem
-		database = ProblemTransformer(domain).transform(tree)
+		database = AplProblemTransformer(domain).transform(tree)
 
 	# Storing the result in the output file
 	with open(args.output_filename,'w') as f:

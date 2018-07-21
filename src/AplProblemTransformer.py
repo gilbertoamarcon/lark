@@ -4,7 +4,7 @@ from collections import OrderedDict
 from lark import Lark
 from lark import Transformer
 
-class ProblemTransformer(Transformer):
+class AplProblemTransformer(Transformer):
 
 	def __init__(self,domain):
 		self.domain = domain
