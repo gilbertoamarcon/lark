@@ -42,15 +42,14 @@ capability_dict		: capability*
 capability			: capability_name ":" number ","
 
 
-worldstate			: "WorldState"		"{" (predicates | numerics | functions)* "}"
-initialstate		: "InitialState"	"{" (predicates | numerics | functions)* "}"
+relations			: predicates | numerics | functions
+worldstate			: "WorldState"		"{" relations* "}"
+initialstate		: "InitialState"	"{" relations* "}"
+task				: task_name			"{" relations* "}" ";"
 task_dict			: "Goal"			"{" task+ "}"
-task				: task_name			"{" (predicates | numerics | func_subgoal)* "}" ";"
 
 predicates			: predicate_name	"(" object_list ")" ";"
 numerics			: numeric			"(" object_list* ")" "=" number ";"
 functions 			: function			"(" object_list ")" "=" ("undefined" | object) ";"
-
-func_subgoal		: function			"(" object_list ")" "==" ("undefined" | object) ";"
 
 

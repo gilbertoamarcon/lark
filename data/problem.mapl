@@ -77,11 +77,11 @@ Problem{
 	}
 	Goal{
 		task_a{
-			PosVictim(v0)==l0;
-			PosVictim(v1)==l0;
+			PosVictim(v0)=l0;
+			PosVictim(v1)=l0;
 		};
 		task_b{
-			PosVictim(v2)==l0;
+			PosVictim(v2)=l0;
 		};
 	}
 	TaskCapabilities{

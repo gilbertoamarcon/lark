@@ -105,6 +105,9 @@ class MaplProblemTransformer(Transformer):
 
 		return ret_val
 
+	def relations(self, (items,)):
+		return items
+
 	def predicates(self, items):
 		return {
 			'type':				'predicate',
@@ -129,7 +132,5 @@ class MaplProblemTransformer(Transformer):
 
 	def functions(self, items):
 		return self.assign(items, 'function')
-
-	func_subgoal = functions
 
 
