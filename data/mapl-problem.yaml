@@ -1,7 +1,7 @@
 agents: {r0: Robot, r1: Robot, a: Robot, b: Robot}
 objects: {v0: Victim, v1: Victim, v2: Victim, l0: Location, l1: Location, l2: Location,
   l3: Location}
-agentcaps:
+agentcapabilities:
   r0: {Rescuer: 1.0, Ambulance: 0.0, Bulldozer: 0.0, Transport: 0.0}
   r1: {Rescuer: 1.0, Ambulance: 0.0, Bulldozer: 0.0, Transport: 0.0}
   a: {Rescuer: 0.0, Ambulance: 1.0, Bulldozer: 0.0, Transport: 0.0}
@@ -90,18 +90,32 @@ initialstate:
     Blocked:
     - [l2]
 goal:
-  function:
-    PosVictim:
-    - arguments: [v0]
-      value: l0
-    - arguments: [v1]
-      value: l0
-    - arguments: [v2]
-      value: l0
-    PosRobot: []
-    RobotLoad: []
-    Inside: []
-  predicate:
-    Busy: []
-    Triaged: []
-    Blocked: []
+  task_a:
+    function:
+      PosVictim:
+      - arguments: [v0]
+        value: l0
+      - arguments: [v1]
+        value: l0
+      PosRobot: []
+      RobotLoad: []
+      Inside: []
+    predicate:
+      Busy: []
+      Triaged: []
+      Blocked: []
+  task_b:
+    function:
+      PosVictim:
+      - arguments: [v2]
+        value: l0
+      PosRobot: []
+      RobotLoad: []
+      Inside: []
+    predicate:
+      Busy: []
+      Triaged: []
+      Blocked: []
+taskcapabilities:
+  task_a: {Rescuer: 1.0, Ambulance: 0.0, Bulldozer: 0.0, Transport: 0.0}
+  task_b: {Rescuer: 0.0, Ambulance: 1.0, Bulldozer: 0.0, Transport: 0.0}

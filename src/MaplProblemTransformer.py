@@ -16,35 +16,48 @@ class MaplProblemTransformer(Transformer):
 	def id(self, (s,)):
 		return s.encode('ascii','ignore')
 
-	type			= id
-	agent			= id
-	object			= id
-	capability_name	= id
-	action			= id
-	var				= id
-	deadline		= number
+	def type_list(self, items):
+		type	= items[0]
+		list	= items[1]
+		return [(i,type) for i in list]
+
+	def type_dict(self, items):
+		return OrderedDict([i for l in items for i in l])
+
+	type				= id
+	agent				= id
+	object				= id
+	capability_name		= id
+	predicate_name		= id
+	task_name			= id
+	numeric				= id
+	function			= id
+	action				= id
+	var					= id
+	deadline			= number
+
+	agent_list			= list
+	object_list			= list
+	task_list			= list
+
+	agent_capabilities	= type_dict
+	task_capabilities	= type_dict
+
+	agents				= type_dict
+	objects				= type_dict
+	agent_type			= type_list
+	object_type			= type_list
 
 	def problem(self, problem):
 		return OrderedDict([
-			('agents',			problem[0]),
-			('objects',			problem[1]),
-			('agentcaps',		problem[2]),
-			('worldstate',		problem[3]),
-			('initialstate',	problem[4]),
-			('goal',			problem[5]),
+			('agents',					problem[0]),
+			('objects',					problem[1]),
+			('agentcapabilities',		problem[2]),
+			('worldstate',				problem[3]),
+			('initialstate',			problem[4]),
+			('goal',					problem[5]),
+			('taskcapabilities',		problem[6]),
 		])
-
-	def agents(self, items):
-		return OrderedDict([i for l in items for i in l])
-
-	def agent_type(self, items):
-		return [(i,items[0]) for i in items[1:]]
-
-	def objects(self, items):
-		return OrderedDict([i for l in items for i in l])
-
-	def object_type(self, items):
-		return [(i,items[0]) for i in items[1:]]
 
 	# ===================================
 	# Capabilities
@@ -56,21 +69,28 @@ class MaplProblemTransformer(Transformer):
 	def capability(self, items):
 		return tuple(items)
 
-	# ===================================
-	# Agent Capabilities
-	# ===================================
-
-	def agent_capabilities(self, items):
-		return OrderedDict([i for l in items for i in l])
-
-	def agentcap(self, items):
-		agent_list		= items[0]
+	def capabilities(self, items):
+		list			= items[0]
 		capability_dict	= items[1]
-		return [(agent,deepcopy(capability_dict)) for agent in agent_list]
+		return [(l,deepcopy(capability_dict)) for l in list]
 
-	agent_list = list
+	agentcap			= capabilities
+	taskcap				= capabilities
 
 
+
+
+	def worldstate(self, items):
+		return self.group(items, 'worlddef')
+
+	def initialstate(self, items):
+		return self.group(items, 'statedef')
+
+	def task_dict(self, items):
+		return OrderedDict(items)
+
+	def task(self, items):
+		return (items[0],self.group(items[1:], 'statedef'))
 
 	def group(self, items, keyword):
 
@@ -85,36 +105,31 @@ class MaplProblemTransformer(Transformer):
 
 		return ret_val
 
-	def worldstate(self, items):
-		return self.group(items, 'worlddef')
-
-	def initialstate(self, items):
-		return self.group(items, 'statedef')
-
-	def goalstate(self, items):
-		return self.group(items, 'statedef')
-
-
-	def declare(self, items):
+	def predicates(self, items):
 		return {
-			'type':				items[0].data.encode('ascii','ignore'),
-			'name':				items[0].children[0],
-			'entry':			items[1:],
+			'type':				'predicate',
+			'name':				items[0],
+			'entry':			items[1],
 		}
 
-	def assign(self, items):
+	def assign(self, items, type):
 		return {
-			'type':				items[0].data.encode('ascii','ignore'),
-			'name':				items[0].children[0],
+			'type':				type,
+			'name':				items[0],
 			'entry':{
-				'arguments':	items[1:-1],
-				'value':		items[-1],
+				'arguments':	items[1],
+				'value':		items[2],
 			},
 		}
 
-	predicates		= declare
-	numerics		= assign
-	functions		= assign
-	func_subgoal	= assign
+	def numerics(self, items):
+		if len(items) == 2:
+			items = [items[0], [], items[1]]
+		return self.assign(items, 'numeric')
+
+	def functions(self, items):
+		return self.assign(items, 'function')
+
+	func_subgoal = functions
 
 

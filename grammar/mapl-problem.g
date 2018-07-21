@@ -11,7 +11,8 @@ type				: id
 agent				: id
 object				: id
 capability_name		: id
-predicate			: id
+predicate_name		: id
+task_name			: id
 numeric				: id
 function			: id
 action				: id
@@ -19,17 +20,23 @@ var					: id
 
 ?start				: problem
 
-problem				: "Problem" "{" agents objects agent_capabilities worldstate initialstate goalstate "}"
+problem				: "Problem" "{" agents objects agent_capabilities worldstate initialstate task_dict task_capabilities"}"
 
 agents				: "Agents" "{" agent_type* "}"
-agent_type			: type agent ("," agent)* ";"
+agent_type			: type agent_list ";"
+agent_list			: agent ("," agent)* 
 
 objects				: "Objects" "{" object_type* "}"
-object_type			: type object ("," object)* ";"
+object_type			: type object_list ";"
+object_list			: object ("," object)* 
+
+task_list			: task_name ("," task_name)* 
 
 agent_capabilities	: "AgentCapabilities" "{" agentcap* "}"
 agentcap			: "(" agent_list ")" "{" capability_dict "}" ";"
-agent_list			: agent ("," agent)* 
+
+task_capabilities	: "TaskCapabilities" "{" taskcap* "}"
+taskcap				: "(" task_list ")" "{" capability_dict "}" ";"
 
 capability_dict		: capability*
 capability			: capability_name ":" number ","
@@ -37,12 +44,13 @@ capability			: capability_name ":" number ","
 
 worldstate			: "WorldState"		"{" (predicates | numerics | functions)* "}"
 initialstate		: "InitialState"	"{" (predicates | numerics | functions)* "}"
-goalstate			: "Goal"			"{" (predicates | numerics | func_subgoal)* "}"
+task_dict			: "Goal"			"{" task+ "}"
+task				: task_name			"{" (predicates | numerics | func_subgoal)* "}" ";"
 
-predicates			: predicate		"("  object ("," object)* ")" ";"
-numerics			: numeric		"(" (object ("," object)*)* ")" "=" number ";"
-functions 			: function		"("  object ("," object)* ")" "=" ("undefined" | object) ";"
+predicates			: predicate_name	"(" object_list ")" ";"
+numerics			: numeric			"(" object_list* ")" "=" number ";"
+functions 			: function			"(" object_list ")" "=" ("undefined" | object) ";"
 
-func_subgoal		: function		"("  object ("," object)* ")" "==" ("undefined" | object) ";"
+func_subgoal		: function			"(" object_list ")" "==" ("undefined" | object) ";"
 
 

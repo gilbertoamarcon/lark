@@ -76,8 +76,26 @@ Problem{
 
 	}
 	Goal{
-		PosVictim(v0)==l0;
-		PosVictim(v1)==l0;
-		PosVictim(v2)==l0;
+		task_a{
+			PosVictim(v0)==l0;
+			PosVictim(v1)==l0;
+		};
+		task_b{
+			PosVictim(v2)==l0;
+		};
+	}
+	TaskCapabilities{
+		(task_a){
+			Rescuer: 1,
+			Ambulance: 0,
+			Bulldozer: 0,
+			Transport: 0,
+		};
+		(task_b){
+			Rescuer: 0,
+			Ambulance: 1,
+			Bulldozer: 0,
+			Transport: 0,
+		};
 	}
 }
