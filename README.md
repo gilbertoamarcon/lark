@@ -13,13 +13,14 @@ sudo pip install lark-parser
 
 ## Usage
 
+### APL
 
-Domain Parsing:
+Apl Domain Parsing:
 ```
 python src/apl-parse.py -g grammar/apl-domain.g -i data/domain.apl -o data/apl-domain.yaml
 ```
 
-Problem Parsing:
+Apl Problem Parsing:
 ```
 python src/apl-parse.py -g grammar/apl-problem.g -y data/apl-domain.yaml -i data/problem.apl -o data/apl-problem.yaml
 ```
