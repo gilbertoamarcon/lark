@@ -15,25 +15,40 @@ class AplProblemTransformer(Transformer):
 	def id(self, (s,)):
 		return s.encode('ascii','ignore')
 
-	type		= id
-	object		= id
-	action		= id
-	var			= id
-	deadline	= number
+	def object_type(self, items):
+		type	= items[0]
+		list	= items[1]
+		return [(i,type) for i in list]
+
+	def objects(self, items):
+		return OrderedDict([i for l in items for i in l])
+
+	type				= id
+	object				= id
+	predicate			= id
+	numeric				= id
+	function			= id
+	action				= id
+	var					= id
+	deadline			= number
+	object_list			= list
 
 	def problem(self, problem):
 		return OrderedDict([
-			('objects',			problem[0]),
-			('worldstate',		problem[1]),
-			('initialstate',	problem[2]),
-			('goal',			problem[3]),
+			('objects',					problem[0]),
+			('worldstate',				problem[1]),
+			('initialstate',			problem[2]),
+			('goal',					problem[3]),
 		])
 
-	def objects(self, items):
-		return dict([i for l in items for i in l])
+	def worldstate(self, items):
+		return self.group(items, 'worlddef')
 
-	def object_type(self, items):
-		return [(i,items[0]) for i in items[1:]]
+	def initialstate(self, items):
+		return self.group(items, 'statedef')
+
+	def goalstate(self, items):
+		return self.group(items, 'statedef')
 
 	def group(self, items, keyword):
 
@@ -48,36 +63,31 @@ class AplProblemTransformer(Transformer):
 
 		return ret_val
 
-	def worldstate(self, items):
-		return self.group(items, 'worlddef')
-
-	def initialstate(self, items):
-		return self.group(items, 'statedef')
-
-	def goalstate(self, items):
-		return self.group(items, 'statedef')
-
-
-	def declare(self, items):
+	def predicates(self, items):
 		return {
-			'type':				items[0].data.encode('ascii','ignore'),
-			'name':				items[0].children[0],
-			'entry':			items[1:],
+			'type':				'predicate',
+			'name':				items[0],
+			'entry':			items[1],
 		}
 
-	def assign(self, items):
+	def assign(self, items, type):
 		return {
-			'type':				items[0].data.encode('ascii','ignore'),
-			'name':				items[0].children[0],
+			'type':				type,
+			'name':				items[0],
 			'entry':{
-				'arguments':	items[1:-1],
-				'value':		items[-1],
+				'arguments':	items[1],
+				'value':		items[2],
 			},
 		}
 
-	predicates		= declare
-	numerics		= assign
-	functions		= assign
-	func_subgoal	= assign
+	def numerics(self, items):
+		if len(items) == 2:
+			items = [items[0], [], items[1]]
+		return self.assign(items, 'numeric')
+
+	def functions(self, items):
+		return self.assign(items, 'function')
+
+	func_subgoal = functions
 
 

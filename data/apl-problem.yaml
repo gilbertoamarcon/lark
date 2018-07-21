@@ -1,5 +1,5 @@
-objects: {a: Robot, b: Robot, r0: Robot, r1: Robot, v0: Victim, v1: Victim, v2: Victim,
-  l2: Location, l3: Location, l0: Location, l1: Location}
+objects: {v0: Victim, v1: Victim, v2: Victim, r0: Robot, r1: Robot, a: Robot, b: Robot,
+  l0: Location, l1: Location, l2: Location, l3: Location}
 worldstate:
   numeric:
     DriveStd:
