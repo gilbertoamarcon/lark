@@ -1,7 +1,8 @@
-# Lark
+# APL-MAPL
 
 
-Lark LALR(1) usage examples.
+Parsers for the Actions Concurrency and Time Uncertainty Planner Language (APL) and the Multiagent Actions Concurrency and Time Uncertainty Planner Language (MAPL).
+
 
 
 ## Dependencies
